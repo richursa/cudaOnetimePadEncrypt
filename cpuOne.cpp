@@ -28,6 +28,26 @@ long long int write_file_from_memmory(FILE *pOutFile , int *pPointer,long long i
     }
     return 0;
 }
+long long int generate_random_bits(int  *pPointer , long long int pSize)
+{
+    long long int mSize = pSize;
+    while(pSize!=0)
+    {
+        (*pPointer ) = rand();
+        pSize = pSize - sizeof(int);
+    }
+    return mSize;
+}
+long long int generate_encrypted(int *pDataPointer , int *pRandomData, int *pEncyptedData, long long int pSize)
+{
+    long long int mSize = pSize;
+    while(pSize!=0)
+    {
+        (*pEncryptedData) = (*pDataPointer)^(*pRandomData);
+        pSize = pSize - sizeof(int);
+    }
+    return mSize;
+}
 int main()
 {
     FILE *infile;
