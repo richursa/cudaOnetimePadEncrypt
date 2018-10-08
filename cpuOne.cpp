@@ -1,5 +1,6 @@
 #include<fstream>
 #include<stdio.h>
+#include<iostream>
 #include "random.h"
 long long int  read_file_to_memmory(FILE *pInfile , int *pPointer)
 {
@@ -31,67 +32,40 @@ long long int write_file_from_memmory(FILE *pOutFile , int *pPointer,long long i
 long long int generate_random_bits(int  *pPointer , long long int pSize)
 {
     long long int mSize = pSize;
-    while(pSize!=0)
+    while(pSize>0)
     {
         (*pPointer ) = rand();
         pSize = pSize - sizeof(int);
     }
     return mSize;
 }
-long long int generate_encrypted(int *pDataPointer , int *pRandomData, int *pEncyptedData, long long int pSize)
+long long int generate_encrypted(int *pDataPointer , int *pRandomData, int *pEncryptedData, long long int pSize)
 {
     long long int mSize = pSize;
-    while(pSize!=0)
+    while(pSize>0)
     {
         (*pEncryptedData) = (*pDataPointer)^(*pRandomData);
         pSize = pSize - sizeof(int);
     }
     return mSize;
 }
-int main()
+int main(int argc , char *argv[])
 {
-    FILE *infile;
-    infile = fopen("file.txt","rb");
-    FILE *outfile;
-    FILE *xorFile;
-    xorFile = fopen("xor.txt","wb");
-    outfile = fopen("enc.txt","wb");
-    int *buffer  = new int;
-    int *xorVal = new int;
-    int size;
-    if(infile!= NULL)
-    {
-     size =fread(buffer,1,sizeof(int),infile);
-        while(size!=0)
-        {   
-            *xorVal = rand();
-            *buffer = (*buffer)^(*xorVal);
-            fwrite(buffer ,1,size,outfile);
-            fwrite(xorVal,1,size,xorFile);
-            size = fread(buffer,1,sizeof(int),infile);
-        }
-    }
-    fclose(infile);
-    fclose(outfile);
-    fclose(xorFile);
-    FILE * xorInFile;
-    xorInFile = fopen("xor.txt","rb");
-    FILE *inxfile;
-    FILE *outxfile;
-    inxfile = fopen("enc.txt","rb");
-    outxfile = fopen("dec.txt","wb");
-    if(inxfile!= NULL)
-    {
-        size = fread(xorVal,1,sizeof(int),xorInFile);
-        while(size!=0)
-        {
-            size = fread(buffer,1,size,inxfile);
-            *xorVal = (*xorVal)^(*buffer);
-            fwrite(xorVal,1,size,outxfile);
-            size = fread(xorVal,1,sizeof(int),xorInFile);
-        }
-    }
-    fclose(inxfile);
-    fclose(outxfile);
-    fclose(xorInFile);
+    FILE *inFile;
+    FILE *outFile;
+    inFile = fopen("c.jpg","rb");
+    outFile = fopen("enc","wb");
+    int *dataPointer = new int[268435456];
+    std::cout<<"yo";
+    long long int fileSize = read_file_to_memmory(inFile,dataPointer);
+    std::cout<<fileSize;
+    int *randomBytePointer = new int[fileSize/sizeof(int) + 100];
+    fileSize = generate_random_bits(randomBytePointer , fileSize);
+    std::cout<<"hello2";
+    int *encryptedPointer = new int[fileSize/sizeof(int) +100];
+    fileSize = generate_encrypted(dataPointer,randomBytePointer,encryptedPointer,fileSize);
+    std::cout<<"hello";
+    fileSize =write_file_from_memmory(outFile,encryptedPointer,fileSize);
+    fclose(inFile);
+    fclose(outFile);
 }
