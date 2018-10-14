@@ -73,11 +73,8 @@ int main(int argc , char *argv[])
     keyFile = fopen("key","wb");
     int *dataPointer = new int[268435456];
     long long int fileSize = read_file_to_memmory(inFile,dataPointer);
-    std::cout<<"yo";
-    std::cout<<fileSize;
     int *randomBytePointer = new int[fileSize/sizeof(int) + 100];
     fileSize = generate_random_bits(randomBytePointer , fileSize);
-    std::cout<<"hello2";
     int *encryptedPointer = new int[fileSize/sizeof(int) +100];
     int *d_dataPointer;
     int *d_randomBytePointer;
@@ -89,8 +86,6 @@ int main(int argc , char *argv[])
     cudaMemcpy(d_randomBytePointer,randomBytePointer,fileSize,cudaMemcpyHostToDevice);
     generate_encrypted<<<fileSize/64 + 1,64>>>(d_dataPointer,d_randomBytePointer,d_EncryptedData,fileSize);
     cudaMemcpy(encryptedPointer,d_EncryptedData,fileSize,cudaMemcpyDeviceToHost);
-    cudaDeviceSynchronize();
-    std::cout<<"hello";
     fileSize =write_file_from_memmory(outFile,encryptedPointer,fileSize);
     fileSize =write_file_from_memmory(keyFile,randomBytePointer,fileSize);
     fclose(inFile);
