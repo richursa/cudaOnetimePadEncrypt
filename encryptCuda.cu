@@ -1,4 +1,3 @@
-// richu shaji abraham richursa
 #include<fstream>
 #include<stdio.h>
 #include<iostream>
@@ -88,7 +87,7 @@ int main(int argc , char *argv[])
     cudaMalloc((void**)&d_EncryptedData ,fileSize);
     cudaMemcpy(d_dataPointer,dataPointer,fileSize,cudaMemcpyHostToDevice);
     cudaMemcpy(d_randomBytePointer,randomBytePointer,fileSize,cudaMemcpyHostToDevice);
-    generate_encrypted<<<1000,64>>>(d_dataPointer,d_randomBytePointer,d_EncryptedData,fileSize);
+    generate_encrypted<<<fileSize/64 + 1,64>>>(d_dataPointer,d_randomBytePointer,d_EncryptedData,fileSize);
     cudaMemcpy(encryptedPointer,d_EncryptedData,fileSize,cudaMemcpyDeviceToHost);
     cudaDeviceSynchronize();
     std::cout<<"hello";
